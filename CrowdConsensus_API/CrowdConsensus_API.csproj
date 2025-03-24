@@ -32,8 +32,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CC_App\CC_Application.csproj" />
-      <ProjectReference Include="..\CC_Infrastructure\CC_Infrastructure.csproj" />
+      <ProjectReference Include="..\CC_Application\Application.csproj" />
+      <ProjectReference Include="..\CC_Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
