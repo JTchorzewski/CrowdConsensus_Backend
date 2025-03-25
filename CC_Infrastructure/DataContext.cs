@@ -1,8 +1,8 @@
-﻿using CC_Domain.Model;
+﻿using Domain.Model;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace CC_Infrastructure;
+namespace Infrastructure;
 
 public class DataContext : IdentityDbContext
 {

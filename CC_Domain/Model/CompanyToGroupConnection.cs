@@ -1,4 +1,4 @@
-﻿namespace CC_Domain.Model;
+﻿namespace Domain.Model;
 
 public class CompanyToGroupConnection
 {
