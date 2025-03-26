@@ -6,21 +6,19 @@ namespace CrowdConsensus_API.Controller
 {
     [ApiController]
     [Route("[controller]")]
-    public class CompaniesController(ICompanyService companyService) : ControllerBase
+    public class CompaniesController : ControllerBase
     {
-        private readonly ICompanyService _companyService = companyService;
-
-        [HttpGet]
-        public IActionResult GetCompanies()
+        private readonly ICompanyService _companyService;
+        public CompaniesController(ICompanyService companyService)
         {
-            ListCompanyForListVm companies = _companyService.GetAllCompanyForList();
-
-            if (companies == null || companies.CompanyList == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(companies);
+            _companyService = companyService;
+        }
+        
+        [HttpGet]
+        public IActionResult Index()
+        {
+            var model = _companyService.GetAllCompanyForList();
+            return Ok(model);
         }
     }
 

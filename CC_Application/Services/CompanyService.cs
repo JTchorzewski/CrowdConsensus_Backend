@@ -25,7 +25,7 @@ public class CompanyService : ICompanyService
             var groups = company.CompanyToGroupConnection.Where(s => s.CompanyId == company.Id);
             foreach (var group in groups)
             {
-                groupsList = group + ", " + groupsList;
+                groupsList = group.Group.GroupName + ", " + groupsList;
             }
 
             var companyVm = new CompanyForListVm()
