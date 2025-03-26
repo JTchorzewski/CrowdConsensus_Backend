@@ -12,7 +12,7 @@ public class CompanyRepository : ICompanyRepository
         _dataContext = dataContext;
     }
 
-    public IQueryable<Company> GetCompanies()
+    public IQueryable<Company> GetAllCompaniesInfo()
     {
         return _dataContext.Companies;
     }
