@@ -22,7 +22,7 @@ public class CompanyService : ICompanyService
         string groupsList = "";
         foreach (var company in companies)
         {
-            var groups = company.CompanyToGroupConnection.Where(s => s.CompanyId == company.Id);
+            var groups = company.CompanyToGroupConnection.Where(s => s.SpolkiId == company.Id);
             foreach (var group in groups)
             {
                 groupsList = group.Group.GroupName + ", " + groupsList;
@@ -37,6 +37,24 @@ public class CompanyService : ICompanyService
             };
             result.CompanyList.Add(companyVm);
             groupsList = "";
+        }
+        return result;
+    }
+    
+    public ListCompanyNettoForListVm GetAllCompanyNettoForList()
+    {
+        var companies = _companyRepository.GetAllCompaniesNettoIncome();
+        ListCompanyNettoForListVm result = new ListCompanyNettoForListVm();
+        result.CompanyNettoList = new List<CompanyNettoForListVm>();
+        foreach (var company in companies)
+        {
+            var companyVm = new CompanyNettoForListVm()
+            {
+                Id = company.Id,
+                CompanyName = company.CompanyName,
+                NetProfit = company.NetProfit
+            };
+            result.CompanyNettoList.Add(companyVm);
         }
         return result;
     }

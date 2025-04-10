@@ -9,11 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace CC_Infrastructure.Migrations
+namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250324201457_Init_Create")]
-    partial class Init_Create
+    [Migration("20250408174938_test")]
+    partial class test
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,119 @@ namespace CC_Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("CC_Domain.Model.Company", b =>
+            modelBuilder.Entity("Domain.Model.Company", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Symbol")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Companies");
+                });
+
+            modelBuilder.Entity("Domain.Model.CompanyToGroupConnection", b =>
+                {
+                    b.Property<int>("SpolkiId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("SpolkiId", "GroupId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("CompaniesToGroupsConnection");
+                });
+
+            modelBuilder.Entity("Domain.Model.FinancialData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("NetProfit")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("RetrievedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FinancialData");
+                });
+
+            modelBuilder.Entity("Domain.Model.Group", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("GroupName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("Domain.Model.Quotation", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("Close")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("High")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Low")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Open")
+                        .HasColumnType("numeric");
+
+                    b.Property<long>("Volume")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("Quotations");
+                });
+
+            modelBuilder.Entity("Domain.Model.Spolki", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -43,39 +155,7 @@ namespace CC_Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Companies");
-                });
-
-            modelBuilder.Entity("CC_Domain.Model.CompanyToGroupConnection", b =>
-                {
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("GroupId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("CompanyId", "GroupId");
-
-                    b.HasIndex("GroupId");
-
-                    b.ToTable("CompaniesToGroupsConnection");
-                });
-
-            modelBuilder.Entity("CC_Domain.Model.Group", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("GroupName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Groups");
+                    b.ToTable("Spolki");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -274,23 +354,34 @@ namespace CC_Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CC_Domain.Model.CompanyToGroupConnection", b =>
+            modelBuilder.Entity("Domain.Model.CompanyToGroupConnection", b =>
                 {
-                    b.HasOne("CC_Domain.Model.Company", "Company")
-                        .WithMany("CompanyToGroupConnection")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CC_Domain.Model.Group", "Group")
+                    b.HasOne("Domain.Model.Group", "Group")
                         .WithMany("CompanyToGroupConnection")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Company");
+                    b.HasOne("Domain.Model.Spolki", "Spolki")
+                        .WithMany("CompanyToGroupConnection")
+                        .HasForeignKey("SpolkiId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Group");
+
+                    b.Navigation("Spolki");
+                });
+
+            modelBuilder.Entity("Domain.Model.Quotation", b =>
+                {
+                    b.HasOne("Domain.Model.Company", "Company")
+                        .WithMany("Quotations")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -344,12 +435,17 @@ namespace CC_Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CC_Domain.Model.Company", b =>
+            modelBuilder.Entity("Domain.Model.Company", b =>
+                {
+                    b.Navigation("Quotations");
+                });
+
+            modelBuilder.Entity("Domain.Model.Group", b =>
                 {
                     b.Navigation("CompanyToGroupConnection");
                 });
 
-            modelBuilder.Entity("CC_Domain.Model.Group", b =>
+            modelBuilder.Entity("Domain.Model.Spolki", b =>
                 {
                     b.Navigation("CompanyToGroupConnection");
                 });

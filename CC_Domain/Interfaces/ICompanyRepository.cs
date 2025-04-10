@@ -4,6 +4,7 @@ namespace Domain.Interfaces;
 
 public interface ICompanyRepository
 {
-    public IQueryable<Company> GetAllCompaniesInfo();
+    public IQueryable<Spolki> GetAllCompaniesInfo();
     public IQueryable<Group> GetAllGroups();
+    public IQueryable<FinancialData> GetAllCompaniesNettoIncome();
 }

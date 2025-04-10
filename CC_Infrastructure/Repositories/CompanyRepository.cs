@@ -13,13 +13,18 @@ public class CompanyRepository : ICompanyRepository
         _dataContext = dataContext;
     }
 
-    public IQueryable<Company> GetAllCompaniesInfo()
+    public IQueryable<Spolki> GetAllCompaniesInfo()
     {
-        return _dataContext.Companies.Include(s => s.CompanyToGroupConnection).ThenInclude(c => c.Group);
+        return _dataContext.Spolki.Include(s => s.CompanyToGroupConnection).ThenInclude(c => c.Group);
     }
 
     public IQueryable<Group> GetAllGroups()
     {
         return _dataContext.Groups;
+    }
+
+    public IQueryable<FinancialData> GetAllCompaniesNettoIncome()
+    {
+        return _dataContext.FinancialData;
     }
 }
