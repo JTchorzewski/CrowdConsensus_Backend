@@ -5,7 +5,7 @@ using Application.Interfaces;
 namespace CrowdConsensus_API.Controller
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     public class CompaniesController : ControllerBase
     {
         private readonly ICompanyService _companyService;
@@ -18,6 +18,12 @@ namespace CrowdConsensus_API.Controller
         public IActionResult Index()
         {
             var model = _companyService.GetAllCompanyForList();
+            return Ok(model);
+        }
+        [HttpGet]
+        public IActionResult NettoIncome()
+        {
+            var model = _companyService.GetAllCompanyNettoForList();
             return Ok(model);
         }
     }

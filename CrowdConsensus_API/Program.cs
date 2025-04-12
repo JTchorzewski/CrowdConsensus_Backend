@@ -1,11 +1,18 @@
 using Application;
+using Application.Interfaces;
+using Application.Services;
+using Domain.Interfaces;
 using Infrastructure;
+using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseNpgsql(connectionString));
+
+builder.Services.AddScoped<IFinancialRepository, FinancialRepository>();
+builder.Services.AddScoped<IFinancialDataService, FinancialDataService>();
 
 builder.Services.AddControllers();
 // Add services to the container.
@@ -20,7 +27,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // Upewnij się, że tu jest adres frontendu
+        policy.WithOrigins("http://localhost:5173") 
             .AllowAnyMethod()
             .AllowAnyHeader();
     });

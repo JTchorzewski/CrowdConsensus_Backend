@@ -4,10 +4,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace CC_Infrastructure.Migrations
+namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init_Create : Migration
+    public partial class InitCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -57,8 +57,8 @@ namespace CC_Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    NextRaportDate = table.Column<string>(type: "text", nullable: false)
+                    Symbol = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,6 +76,20 @@ namespace CC_Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Groups", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Spolki",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    NextRaportDate = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Spolki", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -185,25 +199,50 @@ namespace CC_Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CompaniesToGroupsConnection",
+                name: "Quotations",
                 columns: table => new
                 {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     CompanyId = table.Column<int>(type: "integer", nullable: false),
-                    GroupId = table.Column<int>(type: "integer", nullable: false)
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Open = table.Column<decimal>(type: "numeric", nullable: false),
+                    High = table.Column<decimal>(type: "numeric", nullable: false),
+                    Low = table.Column<decimal>(type: "numeric", nullable: false),
+                    Close = table.Column<decimal>(type: "numeric", nullable: false),
+                    Volume = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CompaniesToGroupsConnection", x => new { x.CompanyId, x.GroupId });
+                    table.PrimaryKey("PK_Quotations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CompaniesToGroupsConnection_Companies_CompanyId",
+                        name: "FK_Quotations_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CompaniesToGroupsConnection",
+                columns: table => new
+                {
+                    SpolkiId = table.Column<int>(type: "integer", nullable: false),
+                    GroupId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompaniesToGroupsConnection", x => new { x.SpolkiId, x.GroupId });
                     table.ForeignKey(
                         name: "FK_CompaniesToGroupsConnection_Groups_GroupId",
                         column: x => x.GroupId,
                         principalTable: "Groups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CompaniesToGroupsConnection_Spolki_SpolkiId",
+                        column: x => x.SpolkiId,
+                        principalTable: "Spolki",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -249,6 +288,11 @@ namespace CC_Infrastructure.Migrations
                 name: "IX_CompaniesToGroupsConnection_GroupId",
                 table: "CompaniesToGroupsConnection",
                 column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Quotations_CompanyId",
+                table: "Quotations",
+                column: "CompanyId");
         }
 
         /// <inheritdoc />
@@ -273,16 +317,22 @@ namespace CC_Infrastructure.Migrations
                 name: "CompaniesToGroupsConnection");
 
             migrationBuilder.DropTable(
+                name: "Quotations");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Companies");
+                name: "Groups");
 
             migrationBuilder.DropTable(
-                name: "Groups");
+                name: "Spolki");
+
+            migrationBuilder.DropTable(
+                name: "Companies");
         }
     }
 }
