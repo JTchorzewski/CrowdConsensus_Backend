@@ -5,16 +5,16 @@ namespace Infrastructure.Repositories;
 
 public class FinancialRepository: IFinancialRepository
 {
-    private readonly DataContext _context;
+    private readonly DataContext _dataContext;
 
-    public FinancialRepository(DataContext context)
+    public FinancialRepository(DataContext dataContext)
     {
-        _context = context;
+        _dataContext = dataContext;
     }
 
     public async Task AddAsync(FinancialData data)
     {
-        _context.FinancialData.Add(data);
-        await _context.SaveChangesAsync();
+        _dataContext.FinancialData.Add(data);
+        await _dataContext.SaveChangesAsync();
     }
 }

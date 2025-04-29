@@ -14,21 +14,25 @@ public class FinancialDataController : ControllerBase
         _service = service;
     }
 
-    [HttpPost("scrape/{companyName}/{id}")]
-    public async Task<IActionResult> ScrapeNetProfit(string id, string companyName)
+    [HttpPost("scrape/{companyId}/{companyName}")]
+    public async Task<IActionResult> ScrapeNetProfit(string companyId, string companyName)
     {
         try
         {
-            var data = await _service.ScrapeAndSaveDataAsync(id, companyName);
+            var data = await _service.ScrapeAndSaveDataAsync(companyId, companyName);
             return Ok(data);
         }
         catch (Exception ex)
         {
-            return BadRequest(new { error = ex.Message, inner = ex.InnerException?.Message });
+            return BadRequest(new
+            {
+                error = ex.Message,
+                inner = ex.InnerException?.Message
+            });
         }
     }
     [HttpGet("ping")]
-    public IActionResult Ping()
+    public IActionResult Ping() 
     {
         return Ok("API działa");
     }
