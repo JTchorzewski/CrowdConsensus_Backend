@@ -7,55 +7,31 @@ namespace Application.Services;
 
 public class CompanyService : ICompanyService
 {
-    private readonly ICompanyRepository _companyRepository;
+    private readonly IFinancialRepository _financialRepository;
 
-    public CompanyService(ICompanyRepository companyRepository)
+    public CompanyService(IFinancialRepository financialRepository)
     {
-        _companyRepository = companyRepository;
+        _financialRepository = financialRepository;
     }
 
-    public ListCompanyForListVm GetAllCompanyForList()
+    public ListCompanyRaportForListVm GetAllCompanyRaportsForList()
     {
-        var companies = _companyRepository.GetAllCompaniesInfo();
-        ListCompanyForListVm result = new ListCompanyForListVm();
-        result.CompanyList = new List<CompanyForListVm>();
-        string groupsList = "";
-        foreach (var company in companies)
+        var raports = _financialRepository.GetAllCompaniesRaports();
+        ListCompanyRaportForListVm result = new ListCompanyRaportForListVm();
+        result.CompanyRaportList = new List<CompanyRaportForListVm>();
+        foreach (var raport in raports)
         {
-            var groups = company.CompanyToGroupConnection.Where(s => s.SpolkiId == company.Id);
-            foreach (var group in groups)
+            var companyVm = new CompanyRaportForListVm()
             {
-                groupsList = group.Group.GroupName + ", " + groupsList;
-            }
+                Id = raport.Id,
+                CompanyName = raport.CompanyName,
+                NetProfit = raport.NetProfit,
+                Revenue = raport.Revenue,
+                RaportDate = raport.RaportDate
+            };
+            result.CompanyRaportList.Add(companyVm);
+        }
 
-            var companyVm = new CompanyForListVm()
-            {
-                Id = company.Id,
-                CompanyName = company.Name,
-                Groups = groupsList,
-                NextRaportDate = company.NextRaportDate
-            };
-            result.CompanyList.Add(companyVm);
-            groupsList = "";
-        }
-        return result;
-    }
-    
-    public ListCompanyNettoForListVm GetAllCompanyNettoForList()
-    {
-        var companies = _companyRepository.GetAllCompaniesNettoIncome();
-        ListCompanyNettoForListVm result = new ListCompanyNettoForListVm();
-        result.CompanyNettoList = new List<CompanyNettoForListVm>();
-        foreach (var company in companies)
-        {
-            var companyVm = new CompanyNettoForListVm()
-            {
-                Id = company.Id,
-                CompanyName = company.CompanyName,
-                NetProfit = company.NetProfit
-            };
-            result.CompanyNettoList.Add(companyVm);
-        }
         return result;
     }
 }

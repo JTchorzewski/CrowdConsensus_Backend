@@ -17,4 +17,8 @@ public class FinancialRepository: IFinancialRepository
         _dataContext.FinancialData.Add(data);
         await _dataContext.SaveChangesAsync();
     }
+    public IQueryable<FinancialData> GetAllCompaniesRaports()
+    {
+        return _dataContext.FinancialData;
+    }
 }
