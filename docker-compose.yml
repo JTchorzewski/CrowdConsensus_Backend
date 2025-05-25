@@ -5,8 +5,8 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: crowdconsensus
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: CrowdConsensus
     ports:
       - "5432:5432"
     volumes:
@@ -22,7 +22,7 @@ services:
       - "8080:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=crowdconsensus;Username=postgres;Password=postgres
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=CrowdConsensus;Username=postgres;Password=1234
 
 volumes:
   db_data:
