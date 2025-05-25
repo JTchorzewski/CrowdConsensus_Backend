@@ -1,0 +1,28 @@
+services:
+  db:
+    image: rdzanu/crowdconsensus-db:latest
+    container_name: crowdconsensus-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: CrowdConsensus
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  api:
+    image: rdzanu/crowdconsensus-api:latest
+    container_name: crowdconsensus-api
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=CrowdConsensus;Username=postgres;Password=1234
+
+volumes:
+  db_data:
