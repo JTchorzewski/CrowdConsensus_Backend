@@ -141,7 +141,7 @@ public static class FinancialDataParallelScraper
             CompanyName = companyName,
             NetProfit = netProfit.Value,
             Revenue = revenue.Value,
-            RaportDate = DateTime.SpecifyKind(reportDate.Value, DateTimeKind.Utc)
+            RaportDate = ""
         };
     }
 }

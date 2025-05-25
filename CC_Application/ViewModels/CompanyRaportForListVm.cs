@@ -6,5 +6,5 @@ public class CompanyRaportForListVm
     public string CompanyName { get; set; }
     public decimal NetProfit { get; set; }
     public decimal Revenue { get; set; }
-    public DateTime RaportDate { get; set; }
+    public string RaportDate { get; set; }
 }

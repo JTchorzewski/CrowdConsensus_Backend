@@ -14,23 +14,35 @@ public class CompanyService : ICompanyService
         _financialRepository = financialRepository;
     }
 
-    public ListCompanyRaportForListVm GetAllCompanyRaportsForList()
+    public ListCompanyRaportForListVm GetAllCompanyRaportsForList(int page, int pageSize, string q)
     {
         var raports = _financialRepository.GetAllCompaniesRaports();
-        ListCompanyRaportForListVm result = new ListCompanyRaportForListVm();
-        result.CompanyRaportList = new List<CompanyRaportForListVm>();
-        foreach (var raport in raports)
+        
+        if (!string.IsNullOrWhiteSpace(q))
         {
-            var companyVm = new CompanyRaportForListVm()
+            raports = raports.Where(r => r.CompanyName.Contains(q, StringComparison.OrdinalIgnoreCase));
+        }
+
+        var totalCount = raports.Count();
+        
+        var paginatedRaports = raports
+            .OrderBy(r => r.CompanyName)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        var result = new ListCompanyRaportForListVm
+        {
+            CompanyRaportList = paginatedRaports.Select(raport => new CompanyRaportForListVm
             {
                 Id = raport.Id,
                 CompanyName = raport.CompanyName,
                 NetProfit = raport.NetProfit,
                 Revenue = raport.Revenue,
                 RaportDate = raport.RaportDate
-            };
-            result.CompanyRaportList.Add(companyVm);
-        }
+            }).ToList(),
+            TotalCount = totalCount
+        };
 
         return result;
     }

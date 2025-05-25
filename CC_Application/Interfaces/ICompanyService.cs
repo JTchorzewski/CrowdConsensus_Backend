@@ -4,5 +4,5 @@ namespace Application.Interfaces;
 
 public interface ICompanyService
 {
-    public ListCompanyRaportForListVm GetAllCompanyRaportsForList();
+    public ListCompanyRaportForListVm GetAllCompanyRaportsForList(int page, int pageSize, string q);
 }
