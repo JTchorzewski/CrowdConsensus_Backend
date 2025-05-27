@@ -41,7 +41,7 @@ public class JsonDataImporter : IJsonDataImporter
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Błąd przy pliku {Path.GetFileName(file)}: {ex.Message}");
+                Console.WriteLine($"Błąd przy pliku {Path.GetFileName(file)}: {ex.Message}");
             }
         }
 

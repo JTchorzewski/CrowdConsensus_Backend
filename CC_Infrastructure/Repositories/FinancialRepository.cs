@@ -1,5 +1,6 @@
 ﻿using Domain.Interfaces;
 using Domain.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
@@ -17,8 +18,12 @@ public class FinancialRepository: IFinancialRepository
         _dataContext.FinancialData.Add(data);
         await _dataContext.SaveChangesAsync();
     }
-    public IQueryable<FinancialData> GetAllCompaniesRaports()
+    public IQueryable<FinancialData> GetAllCompaniesRaports(int companyId)
     {
-        return _dataContext.FinancialData;
+        return _dataContext.FinancialData.Include(f => f.Company).Where(q => q.CompanyId == companyId);
+    }
+    public IQueryable<Company> GetAllCompaniesNames()
+    {
+        return _dataContext.Companies;
     }
 }

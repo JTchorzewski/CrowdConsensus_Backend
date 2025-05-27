@@ -16,14 +16,24 @@ namespace CrowdConsensus_API.Controller
             _jsonDataImporter = jsonDataImporter;
         }
         
-        [HttpGet]
-        public IActionResult Index([FromQuery] int page = 1, [FromQuery] int pageSize = 40, [FromQuery] string q = "")
+        [HttpGet("{companyId}")]
+        public IActionResult Index(int companyId, [FromQuery] int page = 1, [FromQuery] int pageSize = 40, [FromQuery] string q = "")
         {
-            var result = _companyService.GetAllCompanyRaportsForList(page, pageSize, q);
+            var result = _companyService.GetAllCompanyRaportsForList(page, pageSize, q, companyId);
 
             return Ok(new {
                 totalCount = result.TotalCount,
                 items = result.CompanyRaportList
+            });
+        }
+        [HttpGet("CompanyList")]
+        public IActionResult CompanyList([FromQuery] int page = 1, [FromQuery] int pageSize = 40, [FromQuery] string q = "")
+        {
+            var result = _companyService.GetAllCompanyNamesForList(page, pageSize, q);
+
+            return Ok(new {
+                totalCount = result.TotalCount,
+                items = result.CompanyNamesList
             });
         }
         [HttpPost("import-json-folder")]
@@ -33,7 +43,7 @@ namespace CrowdConsensus_API.Controller
                 return BadRequest("Ścieżka folderu jest wymagana.");
 
             var count = await _jsonDataImporter.ImportAllFromFolderAsync(folder);
-            return Ok($"✅ Zaimportowano {count} rekordów z folderu: {folder}");
+            return Ok($"aimportowano {count} rekordów z folderu: {folder}");
         }
     }
 

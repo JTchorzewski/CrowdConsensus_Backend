@@ -7,7 +7,7 @@ namespace Application.Services;
 
 public static class DataScraper
 {
-    public static async Task ScrapeFinancialDataAsync(string ticker, string companyName, string filePath)
+    public static async Task ScrapeFinancialDataAsync(string ticker, string filePath, int companyId)
     {
         var url = $"https://www.biznesradar.pl/raporty-finansowe-rachunek-zyskow-i-strat/{ticker},Q";
         var web = new HtmlWeb();
@@ -27,18 +27,17 @@ public static class DataScraper
             .ToList();
 
         var netProfitRow = doc.DocumentNode.SelectSingleNode("//tr[@data-field='IncomeNetProfit']");
-        var revenueRow = doc.DocumentNode.SelectSingleNode("//tr[@data-field='IncomeRevenues']");
 
-        if (netProfitRow == null || revenueRow == null)
+        if (netProfitRow == null)
         {
             Console.WriteLine("Nie znaleziono wierszy z danymi.");
             return;
         }
 
         var netProfitCells = netProfitRow.SelectNodes("td[position() > 1]");
-        var revenueCells = revenueRow.SelectNodes("td[position() > 1]");
+        
 
-        if (netProfitCells == null || revenueCells == null || netProfitCells.Count != revenueCells.Count || netProfitCells.Count != dates.Count)
+        if (netProfitCells == null || netProfitCells.Count != dates.Count)
         {
             Console.WriteLine("Niezgodna liczba kolumn z danymi lub datami.");
             return;
@@ -47,16 +46,14 @@ public static class DataScraper
         for (int i = 0; i < dates.Count; i++)
         {
             decimal? netProfit = ParseValueFromCell(netProfitCells[i]);
-            decimal? revenue = ParseValueFromCell(revenueCells[i]);
 
-            if (netProfit.HasValue || revenue.HasValue)
+            if (netProfit.HasValue)
             {
                 results.Add(new FinancialData
                 {
                     Id = i + 1,
-                    CompanyName = companyName,
+                    CompanyId = companyId,
                     NetProfit = netProfit ?? 0,
-                    Revenue = revenue ?? 0,
                     RaportDate = dates[i]
                 });
             }
