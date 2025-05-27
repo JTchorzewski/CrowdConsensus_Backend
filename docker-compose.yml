@@ -1,28 +1,30 @@
+version: '3.8'
+
 services:
   db:
-    image: rdzanu/crowdconsensus-db:latest
-    container_name: crowdconsensus-db
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: CrowdConsensus
+    image: jtchorzewski/crowdconsensus-db:latest
+    container_name: crowd-db
     ports:
       - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "1234"
+      POSTGRES_DB: CrowdConsensus
+    networks:
+      - appnet
 
-  api:
-    image: rdzanu/crowdconsensus-api:latest
-    container_name: crowdconsensus-api
-    restart: always
-    depends_on:
-      - db
+  app:
+    image: jtchorzewski/ccapp:latest
+    container_name: ccapp
     ports:
       - "8080:8080"
+    depends_on:
+      - db
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=CrowdConsensus;Username=postgres;Password=1234
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=CrowdConsensus;Username=postgres;Password=1234"
+    networks:
+      - appnet
 
-volumes:
-  db_data:
+networks:
+  appnet:
+    driver: bridge
