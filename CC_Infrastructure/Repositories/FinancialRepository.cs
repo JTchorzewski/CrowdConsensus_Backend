@@ -24,6 +24,13 @@ public class FinancialRepository: IFinancialRepository
     }
     public IQueryable<Company> GetAllCompaniesNames()
     {
-        return _dataContext.Companies;
+        return _dataContext.Companies.Include(f => f.FinancialData);
+    }
+    public async Task<Company?> GetByIdAsync(int companyId)
+    {
+        return await _dataContext.Companies
+            .Include(c => c.FinancialData)
+            .Include(c => c.Estimate)
+            .FirstOrDefaultAsync(c => c.Id == companyId);
     }
 }

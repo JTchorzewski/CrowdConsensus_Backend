@@ -10,6 +10,7 @@ public static class DependencyInjection
     {
         services.AddTransient<ICompanyService, CompanyService>();        
         services.AddTransient<IJsonDataImporter, JsonDataImporter>();        
+        services.AddTransient<IEstimateService, EstimateService>();        
         return services;
     }
 }

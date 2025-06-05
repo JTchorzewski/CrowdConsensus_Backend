@@ -49,16 +49,16 @@ public class CompanyService : ICompanyService
     
     public ListCompanyNamesForListVm GetAllCompanyNamesForList(int page, int pageSize, string q)
     {
-        var company = _financialRepository.GetAllCompaniesNames();
-        
+        var companies = _financialRepository.GetAllCompaniesNames(); // musi zawierać dane finansowe
+
         if (!string.IsNullOrWhiteSpace(q))
         {
-            company = company.Where(r => r.Name.Contains(q, StringComparison.OrdinalIgnoreCase));
+            companies = companies.Where(r => r.Name.Contains(q, StringComparison.OrdinalIgnoreCase));
         }
 
-        var totalCount = company.Count();
-        
-        var paginatedRaports = company
+        var totalCount = companies.Count();
+
+        var paginatedCompanies = companies
             .OrderBy(r => r.Name)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -66,14 +66,39 @@ public class CompanyService : ICompanyService
 
         var result = new ListCompanyNamesForListVm
         {
-            CompanyNamesList = paginatedRaports.Select(company => new CompanyNamesForListVm
+            CompanyNamesList = paginatedCompanies.Select(company =>
             {
-                Id = company.Id,
-                CompanyName = company.Name,
+                var latestReport = company.FinancialData?
+                    .OrderByDescending(fd => ParseRaportDate(fd.RaportDate))
+                    .FirstOrDefault();
+
+                return new CompanyNamesForListVm
+                {
+                    Id = company.Id,
+                    CompanyName = company.Name,
+                    NewestNetProfit = latestReport.NetProfit,
+                    NewestRaportDate = latestReport?.RaportDate
+                };
             }).ToList(),
             TotalCount = totalCount
         };
 
         return result;
+    }
+    private int ParseRaportDate(string raportDate)
+    {
+        if (string.IsNullOrEmpty(raportDate)) return 0;
+
+        var parts = raportDate.Split('/');
+        if (parts.Length != 2) return 0;
+
+        if (int.TryParse(parts[0], out var year) &&
+            parts[1].StartsWith("Q") &&
+            int.TryParse(parts[1].Substring(1), out var quarter))
+        {
+            return year * 10 + quarter;
+        }
+
+        return 0;
     }
 }

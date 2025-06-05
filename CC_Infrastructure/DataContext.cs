@@ -12,17 +12,13 @@ public class DataContext : IdentityDbContext<AppUser>
     }
     public DbSet<FinancialData> FinancialData { get; set; }
     public DbSet<Company> Companies { get; set; }
+    public DbSet<Estimate> Estimates { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
         builder.Entity<FinancialData>().HasOne(t => t.Company).WithMany(c => c.FinancialData).HasForeignKey(t => t.CompanyId);
-        //builder.Entity<FinancialData>().ToTable("FinancialData");
-        //builder.Entity<AppUser>().ToTable("AspNetUsers");
-        //builder.Entity<IdentityRole>().ToTable("AspNetRoles");
-        //builder.Entity<IdentityUserRole<string>>().ToTable("AspNetUserRoles");
-        //builder.Entity<IdentityUserClaim<string>>().ToTable("AspNetUserClaims");
-        //builder.Entity<IdentityUserLogin<string>>().ToTable("AspNetUserLogins");
-        //builder.Entity<IdentityRoleClaim<string>>().ToTable("AspNetRoleClaims");
-        //builder.Entity<IdentityUserToken<string>>().ToTable("AspNetUserTokens");
+        builder.Entity<Estimate>().HasIndex(e => new { e.CompanyId, e.AppUserId }).IsUnique(); 
+        builder.Entity<Estimate>().HasOne(e => e.AppUser).WithMany(u => u.Estimates).HasForeignKey(e => e.AppUserId);
+        builder.Entity<Estimate>().HasOne(e => e.Company).WithMany(u => u.Estimate).HasForeignKey(e => e.CompanyId);
     }
 }
