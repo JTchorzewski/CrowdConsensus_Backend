@@ -6,4 +6,5 @@ public class CompanyNamesForListVm
     public string CompanyName { get; set; }
     public string NewestRaportDate { get; set; }
     public decimal NewestNetProfit { get; set; }
+    public decimal NewestPrediction { get; set; }
 }

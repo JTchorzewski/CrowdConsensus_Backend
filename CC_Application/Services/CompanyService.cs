@@ -49,7 +49,7 @@ public class CompanyService : ICompanyService
     
     public ListCompanyNamesForListVm GetAllCompanyNamesForList(int page, int pageSize, string q)
     {
-        var companies = _financialRepository.GetAllCompaniesNames(); // musi zawierać dane finansowe
+        var companies = _financialRepository.GetAllCompaniesNames();
 
         if (!string.IsNullOrWhiteSpace(q))
         {
@@ -64,6 +64,11 @@ public class CompanyService : ICompanyService
             .Take(pageSize)
             .ToList();
 
+        
+        decimal sum = 0;
+        decimal prediction = 0;
+        decimal prediction2 = 0;
+        
         var result = new ListCompanyNamesForListVm
         {
             CompanyNamesList = paginatedCompanies.Select(company =>
@@ -71,13 +76,23 @@ public class CompanyService : ICompanyService
                 var latestReport = company.FinancialData?
                     .OrderByDescending(fd => ParseRaportDate(fd.RaportDate))
                     .FirstOrDefault();
-
+                foreach (var companyx in companies)
+                {
+                    var financialData = companyx.FinancialData;
+                    foreach (var netProfit in financialData)
+                    {
+                         sum += netProfit.NetProfit;
+                    }
+                    prediction = sum / (financialData.Count()+100000);
+                    prediction2 = prediction / latestReport.NetProfit;
+                }
                 return new CompanyNamesForListVm
                 {
                     Id = company.Id,
                     CompanyName = company.Name,
                     NewestNetProfit = latestReport.NetProfit,
-                    NewestRaportDate = latestReport?.RaportDate
+                    NewestRaportDate = latestReport?.RaportDate,
+                    NewestPrediction = prediction2
                 };
             }).ToList(),
             TotalCount = totalCount
